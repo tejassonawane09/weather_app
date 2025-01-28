@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .weather-app {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 10px;
+            width: 80%;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff9800;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #e68900;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-app">
+        <h1>Weather App</h1>
+        <input type="text" id="location" placeholder="Enter location">
+        <button onclick="getWeather()">Get Weather</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const location = document.getElementById('location').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!location) {
+                resultDiv.innerHTML = '<p>Please enter a location.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=b4a9eef649394e5987a195047252801&q=${location}&aqi=yes`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch weather data');
+                }
+
+                const data = await response.json();
+                const { temp_c, condition } = data.current;
+                resultDiv.innerHTML = `
+                    <h2>${data.location.name}, ${data.location.country}</h2>
+                    <p>Temperature: ${temp_c}&deg;C</p>
+                    <p>Condition: ${condition.text}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Could not fetch weather data. Please try again.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
